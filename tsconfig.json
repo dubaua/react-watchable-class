@@ -1,0 +1,39 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "./dist/out-tsc",
+    "noImplicitAny": true,
+    "module": "es2020",
+    "target": "es6",
+    "jsx": "react",
+    "allowJs": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "downlevelIteration": true,
+    "sourceMap": true,
+    "declaration": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "strictPropertyInitialization": true,
+    "strictNullChecks": true,
+    "typeRoots": ["node_modules/@types", "src/@types"],
+    "paths": {
+      "@api/*": ["src/api/*"],
+      "@components/*": ["src/components/*"],
+      "@guards/*": ["src/guards/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@models/*": ["src/models/*"],
+      "@services/*": ["src/services/*"],
+      "@styles/*": ["src/styles/*"],
+      "@utils/*": ["src/utils/*"]
+    },
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "plugins": [{ "name": "typescript-plugin-css-modules" }]
+  },
+  "exclude": ["node_modules", "dist", "bamboo-specs", "lib"]
+}

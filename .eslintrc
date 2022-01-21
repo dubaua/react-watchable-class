@@ -1,0 +1,164 @@
+{
+  "env": {
+    "node": true,
+    "jest": true,
+    "es6": true,
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "prettier",
+    "plugin:prettier/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "sourceType": "module",
+    "ecmaVersion": 2017,
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": ["react", "@typescript-eslint", "prettier"],
+  "root": true,
+  "settings": {
+    "react": {
+      "version": "17.0"
+    }
+  },
+  "rules": {
+    "@typescript-eslint/explicit-function-return-type": "error",
+    "@typescript-eslint/interface-name-prefix": "off",
+    "@typescript-eslint/member-ordering": [
+      "error",
+      {
+        "default": ["private-static-field", "private-instance-field", "public-static-field", "public-instance-field"]
+      }
+    ],
+    "@typescript-eslint/member-delimiter-style": [
+      "error",
+      {
+        "multiline": {
+          "delimiter": "semi",
+          "requireLast": true
+        }
+      }
+    ],
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector": "memberLike",
+        "modifiers": ["private"],
+        "format": ["camelCase"],
+        "leadingUnderscore": "require"
+      },
+      {
+        "selector": "variable",
+        "types": ["boolean"],
+        "format": ["PascalCase"],
+        "prefix": ["is", "should", "has", "can", "did", "will", "are"]
+      },
+      {
+        "selector": "interface",
+        "format": ["PascalCase"],
+        "custom": {
+          "regex": "^(I[A-Z]|Window)",
+          "match": true
+        }
+      },
+      {
+        "selector": "enum",
+        "format": ["PascalCase"],
+        "custom": {
+          "regex": "Enum$",
+          "match": true
+        }
+      }
+    ],
+    "@typescript-eslint/no-empty-function": ["error", { "allow": ["constructors"] }],
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/no-useless-constructor": "error",
+    "@typescript-eslint/type-annotation-spacing": ["error", { "after": true }],
+    "array-bracket-spacing": ["error", "never"],
+    "arrow-spacing": ["error", { "before": true, "after": true }],
+    "block-spacing": "error",
+    "brace-style": "error",
+    "comma-dangle": ["error", "always-multiline"],
+    "comma-spacing": ["error", { "before": false, "after": true }],
+    "curly": ["error", "all"],
+    "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
+    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "keyword-spacing": ["error", { "before": true, "after": true }],
+    "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
+    "no-alert": "error",
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "no-duplicate-imports": ["error", { "includeExports": true }],
+    "no-empty-function": ["error", { "allow": ["constructors"] }],
+    "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 0 }],
+    "no-multi-spaces": ["error"],
+    "no-param-reassign": "error",
+    "no-return-await": "error",
+    "no-spaced-func": "error",
+    "no-trailing-spaces": "error",
+    "no-whitespace-before-property": "error",
+    "no-underscore-dangle": [
+      "error",
+      {
+        "allowAfterThis": true,
+        "allowAfterSuper": true,
+        "allowAfterThisConstructor": true
+      }
+    ],
+    "no-useless-concat": "error",
+    "no-useless-escape": "warn",
+    "no-var": "error",
+    "object-curly-spacing": ["error", "always"],
+    "object-property-newline": ["error", { "allowAllPropertiesOnSameLine": true }],
+    "one-var": ["error", { "var": "never", "let": "never", "const": "never" }],
+    "prefer-arrow-callback": ["error"],
+    "prefer-const": "error",
+    "prefer-destructuring": [
+      "warn",
+      {
+        "array": true,
+        "object": true
+      },
+      {
+        "enforceForRenamedProperties": false
+      }
+    ],
+    "prefer-template": "error",
+    "prettier/prettier": ["error", { "endOfLine": "auto" }],
+    "quotes": ["error", "single", { "allowTemplateLiterals": true }],
+    "semi": ["error", "always"],
+    "semi-spacing": ["error", { "before": false, "after": true }],
+    "sort-imports": ["error", { "ignoreDeclarationSort": true }],
+    "space-before-function-paren": ["error", { "anonymous": "never", "named": "never", "asyncArrow": "always" }],
+    "space-before-blocks": ["error", { "functions": "always", "keywords": "always", "classes": "always" }],
+    "space-in-parens": ["error", "never"],
+    "space-infix-ops": ["error"]
+  },
+  "overrides": [
+    {
+      "files": "**/*/*.spec.ts",
+      "rules": {
+        // for allowing spy on private instance methods passed as any
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    },
+    {
+      "files": "**/*/*.stub.spec.ts",
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    }
+  ]
+}
