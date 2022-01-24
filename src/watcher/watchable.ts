@@ -1,42 +1,86 @@
-/*
-Что тут должно быть
-1. Поддержка типизации декторатора
-2. Декоратор создает прокси и кладет ее в поле по символу.
-3. Прокси умеет перехватывает изменения на примитивы, массивы, (weak~)мап/сет
-4. Хендлер прокси не знает как обрабатывать тот или иной случай, вместо этого, он обращается к структуре множества колбеков
-она описывается следующим образом
-Map<имя_поля, Обработчик_По_символу_зависимого>
-Обработчик_По_символу_зависимого = это мапа, хранящая обработчик по символу компонента
-Далее мы можем подписаться на изменение поля с помощью специального метода, который принимает 
-имя поля, и сам колбек. Он создает символ и кладет его в мапу обработчиков имени поля, в мапу обработчиков по символу.
-И возвращает функцию для отписки, отписывающуюся по созданному символу.
-5. добавляет метод на класс, позволяющий подписываться на изменения
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const HandlersByPropNameSymbol = Symbol('handlers by prop name');
 
-Как должно работать
-Создаем класс-службу и декорируем ее.
-Создаем кастомный хук. Хук принимает класс-службу и имя поля.
-Хук использует одноразовый эффект при создании компонента
-создает подписку на изменения класса, и умеет отписываться.
-Подписка на изменения просто юзает setState с дешевым инкрементом и возвращает поле класса по имени.
-Таким образом реакт знает о том, что компонент нужно перерендерить и получает свежие данные из службы
+interface IAbstractType<T> extends Function {
+  new (...args: any): T;
+  prototype: T;
+}
 
-https://stackoverflow.com/questions/2233952/difference-between-the-composite-pattern-and-decorator-pattern
-*/
+type Handler = (...args: any[]) => any;
 
-export function watchable<T>(constructor: any): T {
-  // save a reference to the original constructor
+interface IWatchable {
+  [HandlersByPropNameSymbol]: Map<string, Set<Handler>>;
+}
+
+function isPrimitive(value: unknown) {
+  const type = typeof value;
+  return value == null || (type != 'object' && type != 'function');
+}
+
+export function Watchable<T extends object>(constructor: IAbstractType<T>) {
   const original = constructor;
 
-  // the new constructor behavior
-  function newConstructor(...args): any {
-    console.log(`New: ${original.name}`);
-    //return  original.apply(this, args);
-    return new original(...args); // according the comments
-  }
+  // eslint-disable-next-line func-style
+  const newConstructor: any = function newConstructor(...args: any[]): any {
+    const instance: any = new original(...args); // according the comments;
 
-  // copy prototype so intanceof operator still works
+    instance[HandlersByPropNameSymbol] = new Map<string, Set<Handler>>();
+
+    const proxy = new Proxy(instance, {
+      set(target, prop, value, receiver) {
+        if (isPrimitive(value)) {
+          const handlers = instance[HandlersByPropNameSymbol].get(prop);
+          handlers.forEach((handler: Handler) => handler());
+        }
+        return Reflect.set(target, prop, value, receiver); // (2)
+      },
+    });
+
+    for (const key in instance) {
+      const value = instance[key];
+      if (isPrimitive(value)) {
+        instance[HandlersByPropNameSymbol].set(key, new Set());
+      }
+    }
+    return proxy;
+  };
+
   newConstructor.prototype = original.prototype;
 
-  // return new constructor (will override original)
-  return newConstructor as unknown as T;
+  return newConstructor;
 }
+
+export class Watch {
+  [HandlersByPropNameSymbol] = new Map<string, Set<Handler>>();
+
+  constructor() {
+    const proxy = new Proxy(this, {
+      set(target, prop: string, value, receiver) {
+        if (isPrimitive(value)) {
+          proxy[HandlersByPropNameSymbol].get(prop)?.forEach((handler) => handler());
+        }
+        return Reflect.set(target, prop, value, receiver);
+      },
+    });
+
+    for (const key in this) {
+      const value = this[key];
+      if (isPrimitive(value)) {
+        this[HandlersByPropNameSymbol].set(key, new Set());
+      }
+    }
+
+    return proxy;
+  }
+}
+
+// service.messagesById = new Proxy(service.messagesById, {
+//   get(target: any, prop: PropertyKey, receiver: any): any {
+//     const value = Reflect.get(target, prop, receiver);
+//     if (prop === 'set' || prop === 'clear') {
+//       setState(state + 1);
+//     }
+//     return typeof value == 'function' ? value.bind(target) : value;
+//   },
+// });

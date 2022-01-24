@@ -2,21 +2,12 @@
 import React, { useContext, useState } from 'react';
 import { Form } from './form';
 import { ServiceContext } from './service.provider';
+import { Test } from './test';
 
 export const Root = (): JSX.Element => {
   const { service } = useContext(ServiceContext);
-  const [state, setState] = useState(0);
-  const messages = Array.from(service.messagesById.values());
-
-  service.messagesById = new Proxy(service.messagesById, {
-    get(target: any, prop: PropertyKey, receiver: any): any {
-      const value = Reflect.get(target, prop, receiver);
-      if (prop === 'set' || prop === 'clear') {
-        setState(state + 1);
-      }
-      return typeof value == 'function' ? value.bind(target) : value;
-    },
-  });
+  const { messages } = service;
+  const [isVisible, setIsVisible] = useState(false);
 
   return (
     <div>
@@ -28,6 +19,9 @@ export const Root = (): JSX.Element => {
       <button type="button" onClick={(): void => service.clearMessages()}>
         Clear messages
       </button>
+
+      <input type="checkbox" onChange={(e) => setIsVisible(e.target.checked)} />
+      {isVisible && <Test />}
       <Form service={service} />
     </div>
   );

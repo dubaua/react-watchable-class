@@ -22,6 +22,7 @@
     "strictPropertyInitialization": true,
     "strictNullChecks": true,
     "typeRoots": ["node_modules/@types", "src/@types"],
+    "experimentalDecorators": true,
     "paths": {
       "@api/*": ["src/api/*"],
       "@components/*": ["src/components/*"],

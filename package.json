@@ -4,6 +4,7 @@
   "description": "Research for reactive class fields in react",
   "main": "src/index.js",
   "scripts": {
+    "start": "webpack serve --config ./config/webpack.config.dev.js --mode development",
     "test": "test"
   },
   "repository": {
